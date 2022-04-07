@@ -1,5 +1,4 @@
 const {Client} = require('pg');
-const { rows } = require('pg/lib/defaults');
 
 const client = new Client('postgres://localhost:5432/juicebox-dev');
 
@@ -51,7 +50,6 @@ async function updateUser(id, fields = {}) {
     const setString = Object.keys(fields).map(
         (key, index) => `"${ key }"=$${ index + 1 }`
     ).join(', ');
-        console.log(setString)
     if (setString.length === 0) {
         return;
     }
@@ -309,6 +307,20 @@ async function getPostById(postId) {
     }
   }
 
+  async function getAllTags() {
+    try {
+      const { rows } = await client.query(`
+        SELECT * 
+        FROM tags;
+      `);
+  
+      return { rows }
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+
 module.exports = {  
     client,
     createUser,
@@ -319,9 +331,9 @@ module.exports = {
     updatePost,
     getAllPosts,
     getPostsByUser,
-    addTagsToPost,
+    getPostsByTagName,
     createTags,
+    getAllTags,
     createPostTag,
-    addTagsToPost,
-    getPostsByTagName
+    addTagsToPost
   }
