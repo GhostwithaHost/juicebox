@@ -29,3 +29,25 @@ server.use((req, res, next) => {
     next();
 });
 
+server.use(async (req, res, next) => {
+    const prefix = 'Bearer '
+    const auth = req.headers['Authorization'];
+
+    if (!auth) {
+        next();
+    }
+
+    if (auth.startsWith(prefix)) {
+        const token = auth.slice(prefix.length);
+        try {
+            const { id } = jwt.verify(data, process.env.JWT_SECRET);
+            const user = await getUserById(id);
+            req.user = user;
+
+            next();
+        } catch (error) {
+            throw error
+        }
+    }
+})
+
