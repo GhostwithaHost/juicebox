@@ -1,6 +1,6 @@
 const express = require('express');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername } = require('../db');
+const { getAllUsers, getUserByUsername, createUser } = require('../db');
 
 usersRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
@@ -10,6 +10,14 @@ usersRouter.use((req, res, next) => {
 
 
 
+usersRouter.get('/', async (req, res) => {
+  const users = await getAllUsers();
+
+  res.send({
+    users
+  });
+
+});
 
 usersRouter.post('/login', async (req, res, next) => {
   const { username, password } = req.body;
@@ -79,12 +87,5 @@ usersRouter.post('/register', async (req, res, next) => {
   } 
 });
 
-usersRouter.get('/', async (req, res) => {
-  const users = await getAllUsers();
-
-  res.send({
-    users
-  });
-});
 
 module.exports = usersRouter;
